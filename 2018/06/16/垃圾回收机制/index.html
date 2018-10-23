@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="js的变量会在内存中申请一块地址。变量越来越多，占据的内存资源也就越来越多，如果资源一直没有被释放，最终会造成内存泄漏。js的垃圾回收，就是找出不再使用的变量，然后释放其占用的内存。js具有自动垃圾回收机制。垃圾收集器会按照固定的时间间隔周期性的执行。到此为止，我们的任务就是找出哪些变量不会再被使用。全局变量直到页面卸载才会被清除，我们不去管它。我们需要关心的，是对局部变量的判断。常用的策略有两种">
+<meta property="og:type" content="article">
+<meta property="og:title" content="垃圾回收机制">
+<meta property="og:url" content="http://yoursite.com/2018/06/16/垃圾回收机制/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="js的变量会在内存中申请一块地址。变量越来越多，占据的内存资源也就越来越多，如果资源一直没有被释放，最终会造成内存泄漏。js的垃圾回收，就是找出不再使用的变量，然后释放其占用的内存。js具有自动垃圾回收机制。垃圾收集器会按照固定的时间间隔周期性的执行。到此为止，我们的任务就是找出哪些变量不会再被使用。全局变量直到页面卸载才会被清除，我们不去管它。我们需要关心的，是对局部变量的判断。常用的策略有两种">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-06-17T03:05:46.598Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="垃圾回收机制">
+<meta name="twitter:description" content="js的变量会在内存中申请一块地址。变量越来越多，占据的内存资源也就越来越多，如果资源一直没有被释放，最终会造成内存泄漏。js的垃圾回收，就是找出不再使用的变量，然后释放其占用的内存。js具有自动垃圾回收机制。垃圾收集器会按照固定的时间间隔周期性的执行。到此为止，我们的任务就是找出哪些变量不会再被使用。全局变量直到页面卸载才会被清除，我们不去管它。我们需要关心的，是对局部变量的判断。常用的策略有两种">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/16/垃圾回收机制/"/>
+
+
+
+
+
+  <title>垃圾回收机制 | </title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title"></span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/16/垃圾回收机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wangS">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">垃圾回收机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-16T15:26:02+08:00">
+                2018-06-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>js的变量会在内存中申请一块地址。变量越来越多，占据的内存资源也就越来越多，如果资源一直没有被释放，最终会造成内存泄漏。js的垃圾回收，就是找出不再使用的变量，然后释放其占用的内存。js具有自动垃圾回收机制。垃圾收集器会按照固定的时间间隔周期性的执行。<br>到此为止，我们的任务就是找出哪些变量不会再被使用。全局变量直到页面卸载才会被清除，我们不去管它。我们需要关心的，是对局部变量的判断。常用的策略有两种，标记清除 &amp; 引用计数。</p>
+<h3 id="标记清除"><a href="#标记清除" class="headerlink" title="标记清除"></a>标记清除</h3><p>这是js最常见的垃圾回收机制。当变量进入执行环境的时候，垃圾回收器会给这个变量打个标记“进入环境”，离开时会标记“离开环境”。垃圾回收器不会清除还在执行环境中的变量。当垃圾回收器执行垃圾回收操作的时候，会给所有变量打上标记“清除”，然后将环境中的变量，以及环境中变量引用的变量的“清除”标记去掉，剩下的还带着标记的，全部回收。</p>
+<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><p>废话不多说，直接上代码<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="string">'123'</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 申明一个变量a，它的值为'123'，这个时候，a指向一块内存地址，这个地址中存的字符串'123'</span></span><br><span class="line"><span class="comment">* 这个时候，我们就说存着'123'的这块内存的引用数为1,因为有一个变量a指向它</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> b = a;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 申明变量b,b是a的引用，所以b也指向a指向的那一块内存地址，即存着'123'的那一块</span></span><br><span class="line"><span class="comment">* 这个时候，我们就说存着'123'的这块内存的引用数为2,因为又有一个变量b指向它</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">a = <span class="literal">null</span>;</span><br><span class="line">b = <span class="literal">null</span>;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 将a和b的值更改掉，所以它们将不再指向存着'123'的那一块内存地址</span></span><br><span class="line"><span class="comment">* 而是指向了一个新的地址，这个地址存放着null</span></span><br><span class="line"><span class="comment">* 此时，存放'123'的那一块内存，将在下一次垃圾回收的时候被释放掉</span></span><br></pre></td></tr></table></figure></p>
+<p>到此为止，你可能会问这样一个问题<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj1 = &#123;&#125;;</span><br><span class="line"><span class="keyword">const</span> obj2 = &#123;&#125;;</span><br><span class="line">obj1.a = obj2;</span><br><span class="line">obj2.a = obj1;</span><br></pre></td></tr></table></figure></p>
+<p>这两个变量互相引用，那它们所指向的内存，计数永远大于零，那就不会被清除了？<br>是的，不会被清除，除非手动切断它们的互相引用，将obj1.a和obj2.a重新赋值。</p>
+<h3 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h3><p>说到垃圾回收机制，我们一般会想到这样一句话，闭包不会被垃圾回收机制回收，大量使用闭包会严重影响性能。</p>
+<p>什么是闭包？</p>
+<ul>
+<li><a href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Closures" target="_blank" rel="noopener">MDN对闭包的解释</a></li>
+<li><a href="https://www.liaoxuefeng.com/wiki/001434446689867b27157e896e74d51a89c25cc8b43bdb3000/00143449934543461c9d5dfeeb848f5b72bd012e1113d15000" target="_blank" rel="noopener">廖雪峰的官方网站</a></li>
+</ul>
+<p>廖雪峰老师的总结很精辟：</p>
+<blockquote>
+<p>函数作为返回值</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fnf = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> fns = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> nfns = fnf();</span><br><span class="line"><span class="comment">// nfns是fnf内部函数fns的引用</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fnf = <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> fns1 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line">    <span class="keyword">const</span> fns2 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        fns1,</span><br><span class="line">        fns2</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> nfns = fnf();</span><br><span class="line"><span class="comment">// nfns = &#123; fns1, fns2 &#125;</span></span><br></pre></td></tr></table></figure>
+<p>我的理解是，父函数中定义了子函数，父函数的返回值中，包含子函数，子函数被外部变量所引用，这样就形成了闭包。就是因为返回值中的函数被外部变量说引用，而这个外部变量往往又是一个全局的或作用域比较大的变量，它会长时间停留在执行环境中，所以才会导致闭包不会被垃圾回收机制回收。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/16/事件机制/" rel="next" title="事件机制">
+                <i class="fa fa-chevron-left"></i> 事件机制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/16/webpack初步/" rel="prev" title="webpack初步">
+                webpack初步 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wangS</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#标记清除"><span class="nav-number">1.</span> <span class="nav-text">标记清除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引用计数"><span class="nav-number">2.</span> <span class="nav-text">引用计数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#闭包"><span class="nav-number">3.</span> <span class="nav-text">闭包</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wangS</span>
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

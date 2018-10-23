@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="generatorgenerator函数可以用来实现异步编程。它使用在function*定义一个函数。 yield &amp;amp; yield*yield用来保存函数执行的现场，执行一次next操作，函数便会执行到下一个 yield 保存的现场。调用next方法返回的是一个对象，value和done，value便是yield返回的值，done标明当前是否是最后一个现场。 123456789functi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Generator">
+<meta property="og:url" content="http://yoursite.com/2018/06/18/Generator/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="generatorgenerator函数可以用来实现异步编程。它使用在function*定义一个函数。 yield &amp;amp; yield*yield用来保存函数执行的现场，执行一次next操作，函数便会执行到下一个 yield 保存的现场。调用next方法返回的是一个对象，value和done，value便是yield返回的值，done标明当前是否是最后一个现场。 123456789functi">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-06-18T10:30:46.673Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Generator">
+<meta name="twitter:description" content="generatorgenerator函数可以用来实现异步编程。它使用在function*定义一个函数。 yield &amp;amp; yield*yield用来保存函数执行的现场，执行一次next操作，函数便会执行到下一个 yield 保存的现场。调用next方法返回的是一个对象，value和done，value便是yield返回的值，done标明当前是否是最后一个现场。 123456789functi">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/18/Generator/"/>
+
+
+
+
+
+  <title>Generator | </title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title"></span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/18/Generator/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wangS">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Generator</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-18T13:47:25+08:00">
+                2018-06-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="generator"><a href="#generator" class="headerlink" title="generator"></a>generator</h3><p>generator函数可以用来实现异步编程。它使用在<code>function*</code>定义一个函数。</p>
+<h4 id="yield-amp-yield"><a href="#yield-amp-yield" class="headerlink" title="yield &amp; yield*"></a>yield &amp; yield*</h4><p><code>yield</code>用来保存函数执行的现场，执行一次<code>next</code>操作，函数便会执行到下一个 yield 保存的现场。<br>调用next方法返回的是一个对象，value和done，value便是yield返回的值，done标明当前是否是最后一个现场。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'one'</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'true'</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'three'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> f = fn();</span><br><span class="line">f.next(); <span class="comment">// &#123; value: 'one', done: false &#125;</span></span><br><span class="line">f.next(); <span class="comment">// &#123; value: 'two', done: false &#125;</span></span><br><span class="line">f.next(); <span class="comment">// &#123; value: 'three', done: true &#125;</span></span><br></pre></td></tr></table></figure>
+<p>如果<code>yield</code>后面想要跟一个generator函数，需要使用<code>yield*</code></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'one'</span>;</span><br><span class="line">    <span class="keyword">yield</span>* fn2();</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'three'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">fn2</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'fn2 one'</span></span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'fn2 two'</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> f = fn();</span><br><span class="line">f.next(); <span class="comment">// &#123; value: 'one', done: false &#125;</span></span><br><span class="line">f.next(); <span class="comment">// &#123; value: 'fn2 one', done: false &#125;</span></span><br><span class="line">f.next(); <span class="comment">// &#123; value: 'fn2 two', done: false &#125;</span></span><br><span class="line">f.next(); <span class="comment">// &#123; value: 'three', done: true &#125;</span></span><br></pre></td></tr></table></figure>
+<h4 id="next"><a href="#next" class="headerlink" title="next"></a>next</h4><p>next方法接收一个参数，这个参数会代替上一个yield返回的值，传递给下一个yield。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> *<span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> i = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">var</span> a = <span class="keyword">yield</span> i + <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">console</span>.log(a); <span class="comment">// &#123; value: 1, done: false &#125;</span></span><br><span class="line">    <span class="keyword">var</span> b = <span class="keyword">yield</span> a + <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> b + <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> f = fn();</span><br><span class="line">f.next(); <span class="comment">// &#123; value: 1, done: false &#125;</span></span><br><span class="line"><span class="comment">// 到这一步，a不等于2，a是yield的返回值 &#123; value: 1, done: false &#125;</span></span><br><span class="line"></span><br><span class="line">f.next(); <span class="comment">// &#123; value: NaN, done: false &#125;</span></span><br><span class="line"><span class="comment">// 由于a不是一个数字，所以此时返回的value是一个NaN</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果我们第二步在 next 传入一个数字 123，</span></span><br><span class="line"><span class="comment">// 则这个传入值会代替上一步yield返回的值，即 a = 123</span></span><br><span class="line">f.next(<span class="number">123</span>); <span class="comment">// &#123; value: 124, done: false &#125; // 123 + 1</span></span><br></pre></td></tr></table></figure>
+<h4 id="return"><a href="#return" class="headerlink" title="return"></a>return</h4><p>return方法可以返回给定的值，并且终结遍历Generator函数</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">fn</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'one'</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'true'</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">'three'</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> f = fn();</span><br><span class="line">f.next();            <span class="comment">// &#123; value: 'one', done: false &#125;</span></span><br><span class="line">f.return(<span class="string">'foo'</span>);     <span class="comment">// &#123; value: 'foo', done: true &#125;</span></span><br><span class="line">f.next();            <span class="comment">// &#123; value: undefined, done: true &#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="co"><a href="#co" class="headerlink" title="co"></a>co</h3><p>co模块是对generator的再封装，可以让generator函数立即执行，不用写一堆的next。</p>
+<p>比如我们现在需要读取两个文件 <code>a.txt</code>和<code>b.txt</code></p>
+<p>使用Promise<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> readTxt = <span class="function">(<span class="params">fileName, options</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        fs.readFile(fileName, options, (error, data) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">readTxt(<span class="string">'a.txt'</span>, <span class="string">'utf8'</span>)</span><br><span class="line">    .then(<span class="function">(<span class="params">t1</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> readTxt(<span class="string">'b.txt'</span>, <span class="string">'utf8'</span>);</span><br><span class="line">    &#125;)</span><br><span class="line">    .then(<span class="function">(<span class="params">t2</span>) =&gt;</span> &#123;&#125;)</span><br><span class="line">    .catch(<span class="function">(<span class="params">err</span>) =&gt;</span> &#123;&#125;);</span><br></pre></td></tr></table></figure></p>
+<p>使用generator + Promise<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> readTxt = <span class="function">(<span class="params">fileName, options</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        fs.readFile(fileName, options, (error, data) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> gen = <span class="function"><span class="keyword">function</span>* (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> t1 = <span class="keyword">yield</span> readTxt(<span class="string">'a.txt'</span>, <span class="string">'utf8'</span>);</span><br><span class="line">    <span class="keyword">const</span> t1 = <span class="keyword">yield</span> readTxt(<span class="string">'a.txt'</span>, <span class="string">'utf8'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> g = gen();</span><br><span class="line"><span class="keyword">let</span> t1, t2;</span><br><span class="line">g.next().value</span><br><span class="line">    .then(<span class="function">(<span class="params">f1</span>) =&gt;</span> &#123;</span><br><span class="line">        g.next().value.then(<span class="function">(<span class="params">f2</span>) =&gt;</span> &#123;</span><br><span class="line">            [t1, t1] = [f1, f2];</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;);</span><br></pre></td></tr></table></figure></p>
+<p>使用co<br>使用generator + Promise<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">const</span> co = <span class="built_in">require</span>(<span class="string">'co'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> readTxt = <span class="function">(<span class="params">fileName, options</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">        fs.readFile(fileName, options, (error, data) =&gt; &#123;</span><br><span class="line">            <span class="keyword">if</span> (error) reject(error);</span><br><span class="line">            resolve(data);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> gen = <span class="function"><span class="keyword">function</span>* (<span class="params">t1, t2</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> t1 = <span class="keyword">yield</span> readTxt(<span class="string">'a.txt'</span>, <span class="string">'utf8'</span>);</span><br><span class="line">    <span class="keyword">const</span> t1 = <span class="keyword">yield</span> readTxt(<span class="string">'a.txt'</span>, <span class="string">'utf8'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> t1, t2;</span><br><span class="line">co(gen(t1, t2));</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/06/18/call apply bind/" rel="next" title="call apply bind">
+                <i class="fa fa-chevron-left"></i> call apply bind
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/18/Promise/" rel="prev" title="Promise">
+                Promise <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wangS</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#generator"><span class="nav-number">1.</span> <span class="nav-text">generator</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#yield-amp-yield"><span class="nav-number">1.1.</span> <span class="nav-text">yield &amp; yield*</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#next"><span class="nav-number">1.2.</span> <span class="nav-text">next</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#return"><span class="nav-number">1.3.</span> <span class="nav-text">return</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#co"><span class="nav-number">2.</span> <span class="nav-text">co</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wangS</span>
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

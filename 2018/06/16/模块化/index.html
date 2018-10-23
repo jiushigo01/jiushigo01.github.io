@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next mist" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="什么是js的模块化es6之前，js是没有自带的模块系统的。而随着项目的发展，js的代码会越来越多。这会给项目带来巨大的维护成本，后期开发也越来越难以分工合作。为了解决这个问题，大神们人为的给js加上了模块。使用较多的便是requireJs和seaJs了。 AMD &amp;amp; CMDrequireJs和seaJs都是为了解决一件事，将js代码模块化。两者选择了不同的实现方式，但是殊途同归。比如现在有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="模块化">
+<meta property="og:url" content="http://yoursite.com/2018/06/16/模块化/index.html">
+<meta property="og:site_name">
+<meta property="og:description" content="什么是js的模块化es6之前，js是没有自带的模块系统的。而随着项目的发展，js的代码会越来越多。这会给项目带来巨大的维护成本，后期开发也越来越难以分工合作。为了解决这个问题，大神们人为的给js加上了模块。使用较多的便是requireJs和seaJs了。 AMD &amp;amp; CMDrequireJs和seaJs都是为了解决一件事，将js代码模块化。两者选择了不同的实现方式，但是殊途同归。比如现在有">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-06-17T03:27:01.490Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="模块化">
+<meta name="twitter:description" content="什么是js的模块化es6之前，js是没有自带的模块系统的。而随着项目的发展，js的代码会越来越多。这会给项目带来巨大的维护成本，后期开发也越来越难以分工合作。为了解决这个问题，大神们人为的给js加上了模块。使用较多的便是requireJs和seaJs了。 AMD &amp;amp; CMDrequireJs和seaJs都是为了解决一件事，将js代码模块化。两者选择了不同的实现方式，但是殊途同归。比如现在有">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/06/16/模块化/"/>
+
+
+
+
+
+  <title>模块化 | </title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title"></span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/06/16/模块化/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wangS">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">模块化</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-06-16T11:05:36+08:00">
+                2018-06-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="什么是js的模块化"><a href="#什么是js的模块化" class="headerlink" title="什么是js的模块化"></a>什么是js的模块化</h3><p>es6之前，js是没有自带的模块系统的。而随着项目的发展，js的代码会越来越多。这会给项目带来巨大的维护成本，后期开发也越来越难以分工合作。<br>为了解决这个问题，大神们人为的给js加上了模块。使用较多的便是requireJs和seaJs了。</p>
+<h3 id="AMD-amp-CMD"><a href="#AMD-amp-CMD" class="headerlink" title="AMD &amp; CMD"></a>AMD &amp; CMD</h3><p>requireJs和seaJs都是为了解决一件事，将js代码模块化。两者选择了不同的实现方式，但是殊途同归。<br>比如现在有一个页面，需要加载D.js，而D.js中的代码需要A.js，B.js，C.js执行完之后才执行。而B.js需要在A.js加载完之后才能执行。requireJs和seaJs分别会怎么处理呢？</p>
+<p>先来看requireJs会怎么处理：</p>
+<ul>
+<li>将每一个js文件作为一个模块</li>
+<li>同时去加载A和C这两个js，在A加载完之后，再去加载B.js</li>
+<li>将加载好的js放在自执行函数中执行一遍</li>
+<li>最后执行D.js</li>
+</ul>
+<p>requireJs的这些处理过程，被requireJs称为 <strong>AMD</strong> 规范。</p>
+<p>seaJs的处理过程和requireJs不太一样：</p>
+<ul>
+<li>将每一个js文件作为一个模块</li>
+<li>同时去加载ABC这三个js</li>
+<li>不会立即执行这个三个js文件，而是在D.js文件调用到的时候，才去执行调用到的js。比如，在D中有一个方法fnD，fnD需要调用A中的方法fnA，而fnA又需要调用B中的fnB，则在这个是个，才会去依次执行A和B这两个文件。</li>
+</ul>
+<p>seaJs的这些处理过程，被seaJs称为 <strong>CMD</strong> 规范。</p>
+<h3 id="CommonJS"><a href="#CommonJS" class="headerlink" title="CommonJS"></a>CommonJS</h3><p>requireJs和seaJs都是为了解决浏览器端的js模块化问题而生。而CommonJs，是为了解决nodeJs中的模块问题而生的。它遵循CMD规范。</p>
+<h3 id="ES6中的模块化"><a href="#ES6中的模块化" class="headerlink" title="ES6中的模块化"></a>ES6中的模块化</h3><p>为了解决js的模块化问题，es6中已经原生支持js模块了。模块导出时使用export，导入时使用import。写法如下</p>
+<p>定义一个模块<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//a.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> str = <span class="string">'abcd'</span>;</span><br><span class="line"><span class="keyword">export</span> str;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> obj = &#123;&#125;;</span><br><span class="line"><span class="keyword">export</span> obj;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fna1 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line"><span class="keyword">export</span> fna1;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> fna2 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> fna3 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>引用时<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//b.js</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 使用export导出的模块，导入时名字需相同，但可以使用as转换</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> &#123; str, obj, fna1, fna2 <span class="keyword">as</span> fnb2 &#125; <span class="keyword">from</span> <span class="string">'a'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* fnb4就是fna3，因为fna3导出时使用了export defalut。每个模块只能使用一次export defalut</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> fnb4 <span class="keyword">from</span> <span class="string">'a'</span>;</span><br></pre></td></tr></table></figure></p>
+<h3 id="module-exports-exports-export-export-default"><a href="#module-exports-exports-export-export-default" class="headerlink" title="module.exports | exports | export | export default"></a>module.exports | exports | export | export default</h3><p>module.exports | exports | export | export default的区别有时候很容易搞混。</p>
+<h4 id="export-amp-export-default"><a href="#export-amp-export-default" class="headerlink" title="export &amp; export default"></a>export &amp; export default</h4><p>刚刚已经说明了export &amp; export default，这两个是ES6导出模块时使用的，不再赘述。</p>
+<h4 id="module-exports-amp-exports"><a href="#module-exports-amp-exports" class="headerlink" title="module.exports &amp; exports"></a>module.exports &amp; exports</h4><p>module.exports &amp; exports是在node中导出模块时使用的。<br>首先，请记住一句话，exports是module.exports的引用，即<code>exports=module.exports</code>。在nodejs中，一个js文件就是一个模块。在每个模块中，都会有一个module对象，这个对象就指向当前的模块。module对象中有一个exports属性，表示当前模块暴露给外部的值。当其他的文件require进来该模块的时候，实际上就是读取了该模块module对象的exports属性。也就是说，真正导出的，是module.exports.</p>
+<h5 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h5><p>那什么是引用呢？先来看下面这个例子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> m = &#123; <span class="attr">e</span>: &#123;&#125; &#125;;</span><br><span class="line"><span class="keyword">const</span> es = m.e;</span><br><span class="line">es.name = <span class="string">'qwer'</span>;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(m);</span><br><span class="line"><span class="comment">// &#123; e: &#123; name: 'qwer' &#125; &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(es);</span><br><span class="line"><span class="comment">// &#123; name: 'qwer' &#125;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// es = m.e 我们就说es是m.e的引用，它们两个其实指向的是同一块内存地址</span></span><br></pre></td></tr></table></figure>
+<p>相同的，module.exports是一个对象，它指向内存中的一个地方，而exports是module.exports的引用，它也指向同一块内存地址。当我们这样写代码的时候，是没事的。</p>
+<p>定义一个模块<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.js</span></span><br><span class="line">exports.fna1 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line">exports.fna2 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>引用这个模块<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// b.js</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 引入a模块</span></span><br><span class="line"><span class="keyword">const</span> a = <span class="built_in">require</span>(<span class="string">'a'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用a模块的方法</span></span><br><span class="line">a.fna1()</span><br><span class="line">a.fna2()</span><br></pre></td></tr></table></figure></p>
+<p>而当我们这样写的时候，那就炸了</p>
+<p>eg 1<br>定义一个模块<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.js</span></span><br><span class="line">exports.fna1 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line">exports.fna2 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fna3 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 下面这样代码，为module.exports重新申请了一块内存地址，导致导出时，只有fna3方法</span></span><br><span class="line"><span class="built_in">module</span>.exports = &#123; fna3 &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>引用这个模块<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// b.js</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 引入a模块</span></span><br><span class="line"><span class="keyword">const</span> a = <span class="built_in">require</span>(<span class="string">'a'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用a模块的方法</span></span><br><span class="line">a.fna1() <span class="comment">// undefined</span></span><br><span class="line">a.fna2() <span class="comment">// undefined</span></span><br><span class="line">a.fna3() <span class="comment">// 正常</span></span><br></pre></td></tr></table></figure></p>
+<p>eg 2<br>定义一个模块<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// a.js</span></span><br><span class="line">exports.fna1 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line">exports.fna2 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> fna3 = <span class="function"><span class="params">()</span> =&gt;</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 下面这行代码，为exports重新申请了一块内存地址</span></span><br><span class="line"><span class="comment">* 而modelu.exports指向的内存地址中，仍然有fna1和fna2</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">exports = &#123; fna3 &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>引用这个模块<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// b.js</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 引入a模块</span></span><br><span class="line"><span class="keyword">const</span> a = <span class="built_in">require</span>(<span class="string">'a'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用a模块的方法</span></span><br><span class="line">a.fna1() <span class="comment">// 正常</span></span><br><span class="line">a.fna2() <span class="comment">// 正常</span></span><br><span class="line">a.fna3() <span class="comment">// undefined</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/06/16/事件机制/" rel="prev" title="事件机制">
+                事件机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wangS</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">19</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是js的模块化"><span class="nav-number">1.</span> <span class="nav-text">什么是js的模块化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AMD-amp-CMD"><span class="nav-number">2.</span> <span class="nav-text">AMD &amp; CMD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CommonJS"><span class="nav-number">3.</span> <span class="nav-text">CommonJS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES6中的模块化"><span class="nav-number">4.</span> <span class="nav-text">ES6中的模块化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#module-exports-exports-export-export-default"><span class="nav-number">5.</span> <span class="nav-text">module.exports | exports | export | export default</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#export-amp-export-default"><span class="nav-number">5.1.</span> <span class="nav-text">export &amp; export default</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#module-exports-amp-exports"><span class="nav-number">5.2.</span> <span class="nav-text">module.exports &amp; exports</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#引用"><span class="nav-number">5.2.1.</span> <span class="nav-text">引用</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wangS</span>
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
